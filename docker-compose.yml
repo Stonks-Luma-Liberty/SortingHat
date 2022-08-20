@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: sortinghat_bot
+    build: .
+    restart: unless-stopped
+    command: ./sortinghat
+    volumes:
+      - .:/sortinghat_bot
