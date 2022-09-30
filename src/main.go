@@ -15,6 +15,15 @@ var session *discordgo.Session
 var cfg config.Config
 var err error
 
+func userHasRole(memberRoles []string, roleName string) bool {
+	for _, role := range memberRoles {
+		if role == roleName {
+			return true
+		}
+	}
+	return false
+}
+
 // Loads the environment variables from the .env file, parses them into the config struct, and then starts a new Discord
 // session
 func init() {
@@ -39,18 +48,35 @@ func init() {
 var (
 	componentsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"role_crypto_trader": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			role := discord.GetRole(s, i.GuildID, "Crypto Trader")
-			log.Printf("Assigning role [%s] to %s", role.Name, i.Member.User.Username)
+			roleName := "Crypto Trader"
+			content := ""
+			role := discord.GetRole(s, i.GuildID, roleName)
+			user := i.Member.User
+			log.Printf("Assigning role [%s] to %s", role.Name, user.Username)
 
-			err = s.GuildMemberRoleAdd(cfg.GuildId, i.Member.User.ID, role.ID)
+			member, err := s.GuildMember(i.GuildID, user.ID)
 			if err != nil {
-				panic(err)
+				return
+			}
+
+			if userHasRole(member.Roles, roleName) {
+				err = s.GuildMemberRoleAdd(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been granted the " + role.Name + " role"
+			} else {
+				err = s.GuildMemberRoleRemove(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been removed from the " + role.Name + " role"
 			}
 
 			err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: "You have been granted the " + role.Name + " role",
+					Content: content,
 					Flags:   uint64(discordgo.MessageFlagsEphemeral),
 				},
 			})
@@ -59,18 +85,35 @@ var (
 			}
 		},
 		"role_nft_trader": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			role := discord.GetRole(s, i.GuildID, "NFT Trader")
-			log.Printf("Assigning role [%s] to %s", role.Name, i.Member.User.Username)
+			roleName := "NFT Trader"
+			content := ""
+			role := discord.GetRole(s, i.GuildID, roleName)
+			user := i.Member.User
+			log.Printf("Assigning role [%s] to %s", role.Name, user.Username)
 
-			err = s.GuildMemberRoleAdd(cfg.GuildId, i.Member.User.ID, role.ID)
+			member, err := s.GuildMember(i.GuildID, user.ID)
 			if err != nil {
-				panic(err)
+				return
+			}
+
+			if userHasRole(member.Roles, roleName) {
+				err = s.GuildMemberRoleAdd(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been granted the " + role.Name + " role"
+			} else {
+				err = s.GuildMemberRoleRemove(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been removed from the " + role.Name + " role"
 			}
 
 			err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: "You have been granted the " + role.Name + " role",
+					Content: content,
 					Flags:   uint64(discordgo.MessageFlagsEphemeral),
 				},
 			})
@@ -79,18 +122,35 @@ var (
 			}
 		},
 		"role_tweeter": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			role := discord.GetRole(s, i.GuildID, "Tweeter")
-			log.Printf("Assigning role [%s] to %s", role.Name, i.Member.User.Username)
+			roleName := "Tweeter"
+			content := ""
+			role := discord.GetRole(s, i.GuildID, roleName)
+			user := i.Member.User
+			log.Printf("Assigning role [%s] to %s", role.Name, user.Username)
 
-			err = s.GuildMemberRoleAdd(cfg.GuildId, i.Member.User.ID, role.ID)
+			member, err := s.GuildMember(i.GuildID, user.ID)
 			if err != nil {
-				panic(err)
+				return
+			}
+
+			if userHasRole(member.Roles, roleName) {
+				err = s.GuildMemberRoleAdd(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been granted the " + role.Name + " role"
+			} else {
+				err = s.GuildMemberRoleRemove(i.GuildID, i.Member.User.ID, role.ID)
+				if err != nil {
+					panic(err)
+				}
+				content = "You have been removed from the " + role.Name + " role"
 			}
 
 			err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: "You have been granted the " + role.Name + " role",
+					Content: content,
 					Flags:   uint64(discordgo.MessageFlagsEphemeral),
 				},
 			})
